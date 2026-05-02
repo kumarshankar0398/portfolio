@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 
-const API = "http://localhost:8000";
-
+// const API = "http://localhost:8000";
+const API = "https://shankar-portfolio-api.onrender.com";
 const useFetch = (url) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
