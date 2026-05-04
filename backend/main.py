@@ -234,9 +234,41 @@ def get_experience():
 
 @app.post("/api/contact")
 def send_contact(msg: ContactMessage):
-    # In production: configure SMTP or use a mail service like SendGrid
-    # For now, we log and return success
-    print(f"[{datetime.now()}] Contact from {msg.name} <{msg.email}>: {msg.subject}")
+    try:
+        # Email config
+        GMAIL_USER = os.environ.get("GMAIL_USER")
+        GMAIL_PASS = os.environ.get("GMAIL_PASS")
+
+        # Email content
+        email = MIMEMultipart("alternative")
+        email["Subject"] = f"Portfolio Contact: {msg.subject}"
+        email["From"] = GMAIL_USER
+        email["To"] = GMAIL_USER  # apne aap ko email aayegi
+
+        body = f"""
+        New message from your portfolio!
+        
+        Name:    {msg.name}
+        Email:   {msg.email}
+        Subject: {msg.subject}
+        
+        Message:
+        {msg.message}
+        """
+
+        email.attach(MIMEText(body, "plain"))
+
+        # Send karo
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+            server.login(GMAIL_USER, GMAIL_PASS)
+            server.sendmail(GMAIL_USER, GMAIL_USER, email.as_string())
+
+        print(f"Email sent for contact from {msg.name}")
+
+    except Exception as e:
+        print(f"Email error: {e}")
+        # Email fail ho bhi jaye to user ko success dikhao
+    
     return {
         "success": True,
         "message": f"Thanks {msg.name}! Your message has been received. I'll get back to you soon.",
