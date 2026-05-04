@@ -87,11 +87,14 @@ export default function App() {
     setMenuOpen(false);
   };
 
-  const handleContact = async (e) => {
+const handleContact = async (e) => {
     e.preventDefault();
+    console.log("🚀 Form submitted!"); // ADD KAR
+    console.log("Form data:", form);   // ADD KAR
     setSubmitting(true);
     try {
-        await emailjs.send(
+        console.log("📧 EmailJS call ho raha hai..."); // ADD KAR
+        const result = await emailjs.send(
             'service_ngdmdvi',
             'template_v56sdx9',
             {
@@ -102,15 +105,15 @@ export default function App() {
             },
             '33AvGzLqBR57BTLZ0'
         );
+        console.log("✅ EmailJS Result:", result); // ADD KAR
         setFormStatus({ ok: true, msg: `Thanks ${form.name}! I'll get back to you soon.` });
         setForm({ name: "", email: "", subject: "", message: "" });
     } catch (err) {
-        console.error(err);
+        console.error("❌ EmailJS Error:", err); // ALREADY HAI
         setFormStatus({ ok: false, msg: "Something went wrong. Please try again." });
     }
     setSubmitting(false);
 };
-
   const categories = ["All", ...new Set(projects.map((p) => p.category))];
   const filteredProjects = filter === "All" ? projects : projects.filter((p) => p.category === filter);
 
