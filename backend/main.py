@@ -4,10 +4,11 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from typing import List
 from datetime import datetime
+import os
 # import smtplib
 # from email.mime.text import MIMEText
 # from email.mime.multipart import MIMEMultipart
-import os
+
 
 app = FastAPI(title="Shankar Kumar Portfolio API", version="1.0.0")
 
