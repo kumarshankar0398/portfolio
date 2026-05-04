@@ -90,19 +90,25 @@ export default function App() {
     e.preventDefault();
     setSubmitting(true);
     try {
-      const res = await fetch(`${API}/api/contact`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-      const data = await res.json();
-      setFormStatus({ ok: true, msg: data.message });
-      setForm({ name: "", email: "", subject: "", message: "" });
-    } catch {
-      setFormStatus({ ok: false, msg: "Something went wrong. Please try again." });
+        await emailjs.send(
+            'service_ngdmdvi',
+            'template_v56sdx9',
+            {
+                from_name:  form.name,
+                from_email: form.email,
+                subject:    form.subject,
+                message:    form.message,
+            },
+            '33AvGzLqBR57BTLZ0'
+        );
+        setFormStatus({ ok: true, msg: `Thanks ${form.name}! I'll get back to you soon.` });
+        setForm({ name: "", email: "", subject: "", message: "" });
+    } catch (err) {
+        console.error(err);
+        setFormStatus({ ok: false, msg: "Something went wrong. Please try again." });
     }
     setSubmitting(false);
-  };
+};
 
   const categories = ["All", ...new Set(projects.map((p) => p.category))];
   const filteredProjects = filter === "All" ? projects : projects.filter((p) => p.category === filter);
