@@ -4,9 +4,9 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from typing import List
 from datetime import datetime
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+# import smtplib
+# from email.mime.text import MIMEText
+# from email.mime.multipart import MIMEMultipart
 import os
 
 app = FastAPI(title="Shankar Kumar Portfolio API", version="1.0.0")
@@ -231,48 +231,54 @@ def get_project(project_id: int):
 def get_experience():
     return EXPERIENCE
 
-
 @app.post("/api/contact")
 def send_contact(msg: ContactMessage):
-    try:
-        # Email config
-        GMAIL_USER = os.environ.get("GMAIL_USER")
-        GMAIL_PASS = os.environ.get("GMAIL_PASS")
-
-        # Email content
-        email = MIMEMultipart("alternative")
-        email["Subject"] = f"Portfolio Contact: {msg.subject}"
-        email["From"] = GMAIL_USER
-        email["To"] = GMAIL_USER  # apne aap ko email aayegi
-
-        body = f"""
-        New message from your portfolio!
-        
-        Name:    {msg.name}
-        Email:   {msg.email}
-        Subject: {msg.subject}
-        
-        Message:
-        {msg.message}
-        """
-
-        email.attach(MIMEText(body, "plain"))
-
-        # Send karo
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-            server.login(GMAIL_USER, GMAIL_PASS)
-            server.sendmail(GMAIL_USER, GMAIL_USER, email.as_string())
-
-        print(f"Email sent for contact from {msg.name}")
-
-    except Exception as e:
-        print(f"Email error: {e}")
-        # Email fail ho bhi jaye to user ko success dikhao
-    
+    print(f"Contact from {msg.name} <{msg.email}>: {msg.subject}")
     return {
         "success": True,
         "message": f"Thanks {msg.name}! Your message has been received. I'll get back to you soon.",
     }
+# @app.post("/api/contact")
+# def send_contact(msg: ContactMessage):
+#     try:
+#         # Email config
+#         GMAIL_USER = os.environ.get("GMAIL_USER")
+#         GMAIL_PASS = os.environ.get("GMAIL_PASS")
+
+#         # Email content
+#         email = MIMEMultipart("alternative")
+#         email["Subject"] = f"Portfolio Contact: {msg.subject}"
+#         email["From"] = GMAIL_USER
+#         email["To"] = GMAIL_USER  # apne aap ko email aayegi
+
+#         body = f"""
+#         New message from your portfolio!
+        
+#         Name:    {msg.name}
+#         Email:   {msg.email}
+#         Subject: {msg.subject}
+        
+#         Message:
+#         {msg.message}
+#         """
+
+#         email.attach(MIMEText(body, "plain"))
+
+#         # Send karo
+#         with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+#             server.login(GMAIL_USER, GMAIL_PASS)
+#             server.sendmail(GMAIL_USER, GMAIL_USER, email.as_string())
+
+#         print(f"Email sent for contact from {msg.name}")
+
+#     except Exception as e:
+#         print(f"Email error: {e}")
+#         # Email fail ho bhi jaye to user ko success dikhao
+    
+#     return {
+#         "success": True,
+#         "message": f"Thanks {msg.name}! Your message has been received. I'll get back to you soon.",
+#     }
 
 
 @app.get("/api/stats")
