@@ -1,11 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import emailjs from '@emailjs/browser';
 
-// ✅ FIX: EmailJS initialize kiya — yahi problem thi!
 emailjs.init('33AvGzLqBR57BTLZ0');
 
-// const API = "http://localhost:8000";
 const API = "https://shankar-kumar-portfolio-api.onrender.com";
+
 const useFetch = (url) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -90,7 +89,6 @@ export default function App() {
     setMenuOpen(false);
   };
 
-  // ✅ FIX: Clean handleContact — init upar ho gaya, yahan sirf send()
   const handleContact = async (e) => {
     e.preventDefault();
     setSubmitting(true);
@@ -121,7 +119,6 @@ export default function App() {
 
   const categories = ["All", ...new Set(projects.map((p) => p.category))];
   const filteredProjects = filter === "All" ? projects : projects.filter((p) => p.category === filter);
-
   const skillCategories = [...new Set(skills.map((s) => s.category))];
 
   return (
@@ -156,11 +153,73 @@ export default function App() {
         .filter-btn.active, .filter-btn:hover { background: #6366f1; border-color: #6366f1; color: white; }
         @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(99,102,241,0.12); border: 1px solid rgba(99,102,241,0.3); border-radius: 100px; padding: 6px 16px; font-size: 13px; color: #a5b4fc; margin-bottom: 24px; }
         .stat-card { text-align: center; padding: 32px 20px; }
         .stat-number { font-family: 'Syne', sans-serif; font-size: 42px; font-weight: 800; background: linear-gradient(135deg, #6366f1, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .stat-label { color: #64748b; font-size: 13px; margin-top: 4px; }
         .glow { position: absolute; border-radius: 50%; filter: blur(80px); pointer-events: none; opacity: 0.15; }
+
+        /* Portrait photo wrapper */
+        .photo-wrapper {
+          position: relative;
+          width: 230px;
+          height: 310px;
+        }
+        .photo-ring {
+          position: absolute;
+          inset: -3px;
+          border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+          background: linear-gradient(135deg, #6366f1, #a855f7, #0ea5e9);
+          z-index: 0;
+          animation: spin 6s linear infinite;
+        }
+        .photo-ring-bg {
+          position: absolute;
+          inset: 2px;
+          border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+          background: #0a0a0f;
+          z-index: 1;
+        }
+        .photo-img {
+          width: 230px;
+          height: 310px;
+          border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+          object-fit: cover;
+          object-position: top center;
+          position: relative;
+          z-index: 2;
+          display: block;
+        }
+        .photo-fallback {
+          width: 230px;
+          height: 310px;
+          border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+          background: rgba(99,102,241,0.15);
+          border: 2px solid rgba(99,102,241,0.3);
+          display: none;
+          align-items: center;
+          justify-content: center;
+          position: relative;
+          z-index: 2;
+          font-family: 'Syne', sans-serif;
+          font-size: 56px;
+          font-weight: 800;
+          color: #6366f1;
+        }
+        .photo-badge {
+          position: absolute;
+          bottom: 16px;
+          right: -10px;
+          z-index: 3;
+          background: #0a0a0f;
+          border-radius: 100px;
+          padding: 6px 14px;
+          border: 1px solid rgba(34,197,94,0.3);
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
       `}</style>
 
       {/* Nav */}
@@ -236,27 +295,24 @@ export default function App() {
               )}
             </div>
 
-            {/* Right — profile photo */}
+            {/* Right — portrait photo */}
             <div style={{ flex: "0 0 auto", display: "flex", justifyContent: "center" }}>
-              <div style={{ position: "relative" }}>
-                {/* Glowing ring */}
-                <div style={{ position: "absolute", inset: -3, borderRadius: "50%", background: "linear-gradient(135deg, #6366f1, #a855f7, #0ea5e9)", zIndex: 0, animation: "spin 6s linear infinite" }} />
-                <div style={{ position: "absolute", inset: 2, borderRadius: "50%", background: "#0a0a0f", zIndex: 1 }} />
+              <div className="photo-wrapper">
+                <div className="photo-ring" />
+                <div className="photo-ring-bg" />
                 <img
                   src={`${API}/static/profile.jpg`}
                   alt="Shankar Kumar"
+                  className="photo-img"
                   onError={(e) => {
                     e.target.style.display = "none";
                     e.target.nextSibling.style.display = "flex";
                   }}
-                  style={{ width: 260, height: 260, borderRadius: "50%", objectFit: "cover", position: "relative", zIndex: 2, display: "block" }}
                 />
                 {/* Fallback initials avatar */}
-                <div style={{ width: 260, height: 260, borderRadius: "50%", background: "rgba(99,102,241,0.15)", border: "2px solid rgba(99,102,241,0.3)", display: "none", alignItems: "center", justifyContent: "center", position: "relative", zIndex: 2, fontFamily: "'Syne', sans-serif", fontSize: 64, fontWeight: 800, color: "#6366f1" }}>
-                  SK
-                </div>
+                <div className="photo-fallback">SK</div>
                 {/* Online badge */}
-                <div style={{ position: "absolute", bottom: 16, right: 16, zIndex: 3, background: "#0a0a0f", borderRadius: 100, padding: "6px 14px", border: "1px solid rgba(34,197,94,0.3)", display: "flex", alignItems: "center", gap: 6 }}>
+                <div className="photo-badge">
                   <span style={{ width: 7, height: 7, background: "#22c55e", borderRadius: "50%", display: "inline-block" }} />
                   <span style={{ fontSize: 12, color: "#4ade80", fontWeight: 500 }}>Open to work</span>
                 </div>
@@ -265,7 +321,6 @@ export default function App() {
 
           </div>
         </div>
-        <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
       </section>
 
       {/* Skills */}
